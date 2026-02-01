@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Revision Notes Generator</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: 40px auto; }
+    textarea { width: 100%; height: 200px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    pre { background: #f4f4f4; padding: 15px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Revision Notes Generator</h1>
+
+  <input type="file" id="fileInput"><br><br>
+  <textarea id="textInput" placeholder="Or paste your text here..."></textarea>
+  <button onclick="generateNotes()">Generate Notes</button>
+
+  <h2>Notes</h2>
+  <pre id="output"></pre>
+
+<script>
+async function generateNotes() {
+  const text = document.getElementById("textInput").value;
+
+  const res = await fetch("/api/generate-notes", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ text })
+  });
+
+  const data = await res.json();
+  document.getElementById("output").textContent = data.notes;
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const reader = new FileReader();
+  reader.onload = function() {
+    document.getElementById('textInput').value = reader.result;
+  };
+  reader.readAsText(e.target.files[0]);
+});
+</script>
+</body>
+</html>
